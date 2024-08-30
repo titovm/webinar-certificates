@@ -3,34 +3,28 @@
 namespace App\Filament\Resources\CertificateResource\Pages;
 
 use Filament\Tables\Table;
-use Livewire\Component;
 use App\Models\Certificate;
 use App\Models\Participant;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Mail\SendCertificateMail;
 use Filament\Resources\Pages\Page;
-use App\Imports\ParticipantsImport;
-use Filament\Forms\Components\Card;
 use Illuminate\Support\Facades\Mail;
-use Maatwebsite\Excel\Facades\Excel;
-use Filament\Tables\Columns\UrlColumn;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use App\Services\CertificateService;
 use App\Filament\Resources\CertificateResource;
 use Filament\Pages\Actions\Action as PageAction;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Actions\Action as TableAction;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ViewCertificate extends Page implements HasTable
 {
@@ -91,9 +85,6 @@ class ViewCertificate extends Page implements HasTable
             ])
             ->actions([
                 DeleteAction::make()
-                    // ->confirm('Вы уверены, что хотите удалить этого участника и его сертификат?')
-                    // ->confirmButtonText('Да, удалить')
-                    // ->cancelButtonText('Отмена')
                     ->label('Удалить')
                     ->before(function (Participant $record) {
                         if ($record->certificate_url) {
@@ -136,18 +127,45 @@ class ViewCertificate extends Page implements HasTable
 
     public function getActions(): array
     {
-        return [
+        // Determine if the certificate is a module or acknowledgment
+        $isModuleOrAcknowledgment = in_array($this->certificate->lecture_type, ['module', 'acknowledgment']);
+
+        $actions = [
             PageAction::make('addParticipant')
                 ->label('Добавить участника')
-                ->form([
-                    TextInput::make('name')->required()->label('Имя'),
-                    TextInput::make('email')->required()->email()->label('Email'),
-                ])
-                ->action(function (array $data) {
+                ->form(function () use ($isModuleOrAcknowledgment) {
+                    $fields = [
+                        TextInput::make('name')->required()->label('Имя'),
+                        TextInput::make('email')->required()->email()->label('Email'),
+                    ];
+
+                    if ($isModuleOrAcknowledgment) {
+                        $fields = array_merge($fields, $this->getModuleOrAcknowledgmentFields());
+                    }
+
+                    return $fields;
+                })
+                ->action(function (array $data) use ($isModuleOrAcknowledgment) {
+                    // Prepare additional data for module or acknowledgment
+                    $participantData = [];
+
+                    if ($isModuleOrAcknowledgment) {
+                        if ($this->certificate->lecture_type === 'module') {
+                            $participantData['certificate_number'] = $data['certificate_number'];
+                            $participantData['date_1'] = $data['date_1'];
+                            $participantData['date_2'] = $data['date_2'];
+                        } elseif ($this->certificate->lecture_type === 'acknowledgment') {
+                            $participantData['text'] = $data['text'];
+                            $participantData['start_date'] = $data['start_date'];
+                            $participantData['end_date'] = $data['end_date'];
+                        }
+                    }
+
                     // Create the participant
                     $participant = $this->certificate->participants()->create([
                         'name' => $data['name'],
                         'email' => $data['email'],
+                        'data' => $participantData,
                         'certificate_url' => '',  // This will be updated after generating the PDF
                     ]);
 
@@ -175,7 +193,11 @@ class ViewCertificate extends Page implements HasTable
                         ->success()
                         ->send();
                 }),
-            PageAction::make('importParticipants')
+        ];
+
+        if (!$isModuleOrAcknowledgment) {
+            // Add the importParticipants action only for webinar and event types
+            $actions[] = PageAction::make('importParticipants')
                 ->label('Импорт участников')
                 ->form([
                     FileUpload::make('participants_csv')
@@ -187,18 +209,36 @@ class ViewCertificate extends Page implements HasTable
                 ->action(function (array $data) {
                     /** @var TemporaryUploadedFile $file */
                     $file = $data['participants_csv'];
-    
+
                     // Process the CSV file directly using the Excel import
                     Excel::import(new ParticipantsImport($this->certificate), $file->getRealPath());
-    
+
                     Notification::make()
                         ->title('Участники успешно добавлены!')
                         ->success()
                         ->send();
-                }),
-            
-        ];
+                });
+        }
+
+        return $actions;
     }
 
+    protected function getModuleOrAcknowledgmentFields(): array
+    {
+        if ($this->certificate->lecture_type === 'module') {
+            return [
+                TextInput::make('certificate_number')->required()->label('Номер сертификата'),
+                DatePicker::make('date_1')->required()->label('Дата 1'),
+                DatePicker::make('date_2')->required()->label('Дата 2'),
+            ];
+        } elseif ($this->certificate->lecture_type === 'acknowledgment') {
+            return [
+                TextInput::make('text')->required()->label('Текст благодарности'),
+                DatePicker::make('start_date')->required()->label('Дата начала'),
+                DatePicker::make('end_date')->required()->label('Дата окончания'),
+            ];
+        }
 
+        return [];
+    }
 }

@@ -18,12 +18,19 @@ class Certificate extends Model
      * @var array
      */
     protected $fillable = [
-        'webinar_name',
-        'lecturer_name',
-        'date',
+        'name',
+        'data',
         'lecture_type',
-        'hours',
     ];
+
+    protected $casts = [
+        'data' => 'array',  // Automatically cast the JSON field to an array
+    ];
+
+    public function getDataField($field)
+    {
+        return $this->data[$field] ?? null;
+    }
 
     protected static function booted()
     {

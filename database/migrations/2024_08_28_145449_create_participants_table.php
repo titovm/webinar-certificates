@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email');
+            $table->json('data')->nullable();
             $table->foreignId('certificate_id')->constrained()->onDelete('cascade');
             $table->string('certificate_url')->nullable();
             $table->timestamps();

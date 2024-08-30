@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Database\Seeders\CertificateSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -22,6 +23,6 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('admin'),
         ]);
 
-        $this->call(CertificateSeeder::class);
+        // $this->call(CertificateSeeder::class);
     }
 }

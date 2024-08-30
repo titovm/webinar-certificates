@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('certificates', function (Blueprint $table) {
             $table->id();
-            $table->string('webinar_name');
-            $table->string('lecturer_name');
-            $table->date('date');
-            $table->enum('lecture_type', ['Webinar', 'Module', 'Masterclass'])->default('Webinar');
-            $table->integer('hours')->nullable();
+            $table->string('name');
+            $table->json('data')->nullable();
+            $table->enum('lecture_type', ['webinar', 'event', 'module', 'acknowledgment'])->index();
             $table->timestamps();
         });
     }

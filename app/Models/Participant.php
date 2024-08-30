@@ -20,6 +20,11 @@ class Participant extends Model
         'email',
         'certificate_id',
         'certificate_url',
+        'data',
+    ];
+
+    protected $casts = [
+        'data' => 'array',
     ];
 
     public function certificate()

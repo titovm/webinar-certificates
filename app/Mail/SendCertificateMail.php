@@ -32,7 +32,7 @@ class SendCertificateMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Ваш сертификат "' . $this->participant->certificate->webinar_name . '"',
+            subject: 'Ваш сертификат "' . $this->participant->certificate->name . '"',
         );
     }
 
