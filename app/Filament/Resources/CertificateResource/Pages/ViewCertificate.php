@@ -8,19 +8,20 @@ use App\Models\Participant;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Mail\SendCertificateMail;
 use Filament\Resources\Pages\Page;
+use Illuminate\Support\Collection;
+use App\Services\CertificateService;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Notifications\Notification;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Facades\Storage;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Support\Collection;
-use App\Services\CertificateService;
 use App\Filament\Resources\CertificateResource;
 use Filament\Pages\Actions\Action as PageAction;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -154,6 +155,7 @@ class ViewCertificate extends Page implements HasTable
                             $participantData['certificate_number'] = $data['certificate_number'];
                             $participantData['date_1'] = $data['date_1'];
                             $participantData['date_2'] = $data['date_2'];
+                            $participantData['hours'] = $data['hours'];
                         } elseif ($this->certificate->lecture_type === 'acknowledgment') {
                             $participantData['text'] = $data['text'];
                             $participantData['start_date'] = $data['start_date'];
@@ -230,6 +232,14 @@ class ViewCertificate extends Page implements HasTable
                 TextInput::make('certificate_number')->required()->label('Номер сертификата'),
                 DatePicker::make('date_1')->required()->label('Дата 1'),
                 DatePicker::make('date_2')->required()->label('Дата 2'),
+                Select::make('hours')
+                    ->label('Часы')
+                    ->options([
+                        '61' => '61 час',
+                        '70' => '70 часов',
+                    ])
+                    ->required()
+                    ->default('61'),
             ];
         } elseif ($this->certificate->lecture_type === 'acknowledgment') {
             return [

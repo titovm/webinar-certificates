@@ -47,6 +47,19 @@
             font-size: 28px;
             font-weight: bold;
         }
+        .module-dates {
+            width: 500px;
+            margin: 0 auto;
+        }
+        .module-dates p {
+            display: inline-block;
+            width: 50%;
+            margin: 0;
+            padding: 0;
+        }
+        .module-dates p {
+            text-align: center;
+        }
         .logo {
             position: absolute;
         }
@@ -62,7 +75,7 @@
         }
         .signature {
             position: absolute;
-            bottom: 0px;
+            bottom: 10px;
             text-align: center;
             width: 340px;
         }
@@ -81,8 +94,11 @@
             font-size: 18px;
             line-height: 16px;
         }
-        .signature img {
+        .malik img {
             width: 120px;
+        }
+        .udi img {
+            width: 190px;
         }
     </style>
 </head>
@@ -92,9 +108,15 @@
         <x-base64-image src="images/emdr_spb.png" alt="EMDR Санкт-Петербург" class="logo spb"/>
         
         
-        <h1 class="title">Сертификат участника</h1>
+        @if ($certificate->lecture_type != 'acknowledgment')
+            <h1 class="title">Сертификат участника</h1>
+        @else
+            <h1 class="title">Благодарственное письмо</h1>
+        @endif
         
-        <h2 class="certificate-name">{{ $certificate->name }}</h2>
+        @if ($certificate->lecture_type != 'module')
+            <h2 class="certificate-name">{{ $certificate->name }}</h2>
+        @endif
 
         <p class="name">{{ $participant->name }}</p>
 
@@ -107,8 +129,12 @@
                 <p>Дата начала: {{ isset($certificate->data['date']) ? Carbon::parse($certificate->data['date'])->format($dateFormat) : 'N/A' }}</p>
             @elseif ($certificate->lecture_type === 'module')
                 <p>Номер сертификата: {{ $participant->data['certificate_number'] ?? 'N/A' }}</p>
-                <p>Дата 1: {{ isset($participant->data['date_1']) ? Carbon::parse($participant->data['date_1'])->format($dateFormat) : 'N/A' }}</p>
-                <p>Дата 2: {{ isset($participant->data['date_2']) ? Carbon::parse($participant->data['date_2'])->format($dateFormat) : 'N/A' }}</p>
+                <p>Настоящим удостоверяется, что</p>
+                <p>Принял (-а) участие в базовом тренинге<br />({{ $participant->data['hours'] ?? 'N/A' }})</p>
+                <div class="module-dates">
+                    <p><strong>Дата 1:</strong><br />{{ isset($participant->data['date_1']) ? Carbon::parse($participant->data['date_1'])->format($dateFormat) : 'N/A' }}</p>
+                    <p><strong>Дата 2:</strong><br />{{ isset($participant->data['date_2']) ? Carbon::parse($participant->data['date_2'])->format($dateFormat) : 'N/A' }}</p>
+                </div>
             @elseif ($certificate->lecture_type === 'acknowledgment')
                 <p>Текст: {{ $participant->data['text'] ?? 'N/A' }}</p>
                 <p>Дата начала: {{ isset($participant->data['start_date']) ? Carbon::parse($participant->data['start_date'])->format($dateFormat) : 'N/A' }}</p>
@@ -118,7 +144,7 @@
         
         @if ($certificate->lecture_type === 'module')
         <div class="signature udi">
-            <x-base64-image src="images/malik_sign.png" alt="Юлия Малик"/>
+            <x-base64-image src="images/udi_sign.png" alt="Udi Oren"/>
             <h2>Уди Орен</h2>
             <p>Президент Национальной Ассоциации EMDR России</p>
         </div>

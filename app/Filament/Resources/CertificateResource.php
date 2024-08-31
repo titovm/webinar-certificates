@@ -46,7 +46,7 @@ class CertificateResource extends Resource
                     ->required()
                     ->reactive(),
 
-                Forms\Components\Textarea::make('data.lecturer_name')
+                Forms\Components\TextInput::make('data.lecturer_name')
                     ->label('Ведущий')
                     ->visible(fn ($get) => $get('lecture_type') === 'webinar'),
 
@@ -57,32 +57,6 @@ class CertificateResource extends Resource
                 Forms\Components\TextInput::make('data.hours')
                     ->label('Часов')
                     ->visible(fn ($get) => $get('lecture_type') === 'webinar'),
-
-                // Module-specific participant fields
-                // Forms\Components\Repeater::make('participants')
-                //     ->relationship('participants')
-                //     ->schema([
-                //         Forms\Components\TextInput::make('name')->required()->label('Имя'),
-                //         Forms\Components\TextInput::make('email')->required()->email()->label('Email'),
-                //         Forms\Components\TextInput::make('data.certificate_number')
-                //             ->label('Номер сертификата')
-                //             ->visible(fn ($get) => $get('lecture_type') === 'module'),
-                //         Forms\Components\DatePicker::make('data.date_1')
-                //             ->label('Дата 1')
-                //             ->visible(fn ($get) => $get('lecture_type') === 'module'),
-                //         Forms\Components\DatePicker::make('data.date_2')
-                //             ->label('Дата 2')
-                //             ->visible(fn ($get) => $get('lecture_type') === 'module'),
-                //         Forms\Components\Textarea::make('data.text')
-                //             ->label('Текст благодарности')
-                //             ->visible(fn ($get) => $get('lecture_type') === 'acknowledgment'),
-                //         Forms\Components\DatePicker::make('data.start_date')
-                //             ->label('Дата начала')
-                //             ->visible(fn ($get) => $get('lecture_type') === 'acknowledgment'),
-                //         Forms\Components\DatePicker::make('data.end_date')
-                //             ->label('Дата окончания')
-                //             ->visible(fn ($get) => $get('lecture_type') === 'acknowledgment'),
-                //     ]),
             ]);
     }
 
@@ -102,9 +76,7 @@ class CertificateResource extends Resource
                         if ($record->lecture_type === 'webinar') {
                             return 'Ведущий: ' . ($record->data['lecturer_name'] ?? 'N/A');
                         } elseif ($record->lecture_type === 'module') {
-                            $date1 = $record->data['date_1'] ?? 'N/A';
-                            $date2 = $record->data['date_2'] ?? 'N/A';
-                            return "Дата 1: $date1, Дата 2: $date2";
+                            return "Модуль";
                         } else {
                             $startDate = $record->data['start_date'] ?? 'N/A';
                             $endDate = $record->data['end_date'] ?? 'N/A';
