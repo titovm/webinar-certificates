@@ -130,7 +130,13 @@
             @elseif ($certificate->lecture_type === 'module')
                 <p>Номер сертификата: {{ $participant->data['certificate_number'] ?? 'N/A' }}</p>
                 <p>Настоящим удостоверяется, что</p>
-                <p>Принял (-а) участие в базовом тренинге<br />({{ $participant->data['hours'] ?? 'N/A' }})</p>
+                @php
+                    $hoursOptions = [
+                        '61' => '61 час',
+                        '70' => '70 часов',
+                    ];
+                @endphp
+                <p>Принял (-а) участие в базовом тренинге<br />({{ $hoursOptions[$participant->data['hours']] ?? 'N/A' }})</p>
                 <div class="module-dates">
                     <p><strong>Дата 1:</strong><br />{{ isset($participant->data['date_1']) ? Carbon::parse($participant->data['date_1'])->format($dateFormat) : 'N/A' }}</p>
                     <p><strong>Дата 2:</strong><br />{{ isset($participant->data['date_2']) ? Carbon::parse($participant->data['date_2'])->format($dateFormat) : 'N/A' }}</p>

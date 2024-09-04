@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CertificateResource\Pages;
 use App\Filament\Resources\CertificateResource\RelationManagers;
 use App\Filament\Resources\CertificateResource\Pages\ViewCertificate;
+// use App\Filament\Resources\CertificateResource\Pages\SingleCertificates;
 
 class CertificateResource extends Resource
 {
@@ -40,8 +41,8 @@ class CertificateResource extends Resource
                     ->options([
                         'webinar' => 'Вебинар',
                         'event' => 'Мероприятие',
-                        'module' => 'Модуль',
-                        'acknowledgment' => 'Благодарность',
+                        // 'module' => 'Модуль',
+                        // 'acknowledgment' => 'Благодарность',
                     ])
                     ->required()
                     ->reactive(),
@@ -120,6 +121,7 @@ class CertificateResource extends Resource
             'create' => Pages\CreateCertificate::route('/create'),
             'edit' => Pages\EditCertificate::route('/{record}/edit'),
             'view' => ViewCertificate::route('/{record}/view'),
+            'single' => Pages\SingleCertificates::route('/single'),
         ];
     }
 }
