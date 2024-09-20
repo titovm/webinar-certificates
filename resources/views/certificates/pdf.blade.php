@@ -26,7 +26,7 @@
             border-radius: 100px;
             padding: 50px;
             margin: 0px;
-            background: url('{{ public_path("storage/images/emdr_europe_bg.png") }}') center center no-repeat;
+            background: url('{{ public_path("images/emdr_europe_bg.png") }}') center center no-repeat;
             position: relative;
             height: 580px;
         }

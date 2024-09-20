@@ -30,7 +30,7 @@ class Base64Image extends Component
      */
     protected function getBase64Image($src)
     {
-        $path = public_path('storage/' . $src);
+        $path = public_path($src);
 
         if (file_exists($path)) {
             $fileContents = file_get_contents($path);
