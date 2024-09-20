@@ -9,12 +9,12 @@
 <head>
     <meta charset="utf-8">
     <style>
-        /* @font-face {
+        @font-face {
             font-family: 'DejaVu Sans';
-            src: url('{{ storage_path("fonts/DejaVuLGCSans.ttf") }}') format('truetype');
+            src: url('css/DejaVuLGCSans.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
-        } */
+        }
         body {
             font-family: 'DejaVu Sans', sans-serif;
             text-align: center;
