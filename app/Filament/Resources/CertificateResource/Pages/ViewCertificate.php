@@ -90,7 +90,7 @@ class ViewCertificate extends Page implements HasTable
                                 ->send();
     
                             // Refresh the table to show the updated certificate URL
-                            $this->emit('refreshTable');
+                            // $this->emit('refreshTable');
                         }
                     }),
             ])

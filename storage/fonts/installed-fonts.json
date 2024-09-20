@@ -1,8 +1,9 @@
 {
     "dejavu sans": {
-        "bold": "\/Users\/bio_c\/Sites\/webinar-certificates\/vendor\/dompdf\/dompdf\/lib\/fonts\/DejaVuSans-Bold",
-        "bold_italic": "\/Users\/bio_c\/Sites\/webinar-certificates\/vendor\/dompdf\/dompdf\/lib\/fonts\/DejaVuSans-BoldOblique",
-        "italic": "\/Users\/bio_c\/Sites\/webinar-certificates\/vendor\/dompdf\/dompdf\/lib\/fonts\/DejaVuSans-Oblique",
-        "normal": "dejavu_sans_normal_4be0f1d07283b52952804c7b6950da91"
+        "normal": "\/Users\/bio_c\/Sites\/webinar-certificates\/storage\/fonts\/dejavu_sans_normal_4be0f1d07283b52952804c7b6950da91",
+        "bold": "dejavu_sans_bold_006601366c9a5004d131b0463d7432fa"
+    },
+    "involve": {
+        "normal": "involve_normal_46b39140da3ed768b2b1fe9504f2ffae"
     }
 }

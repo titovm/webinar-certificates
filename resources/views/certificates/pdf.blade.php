@@ -15,6 +15,12 @@
             font-weight: normal;
             font-style: normal;
         }
+        @font-face {
+            font-family: 'DejaVu Sans';
+            src: url('css/DejaVuLGCSans-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
         body {
             font-family: 'DejaVu Sans', sans-serif;
             text-align: center;
