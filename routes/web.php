@@ -10,5 +10,5 @@ Route::get('/', function () {
 });
 
 Route::get('/pdf', function () {
-    return view('certificates.pdf');
+    return view('certificates.pdf-test');
 });
