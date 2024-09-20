@@ -26,13 +26,10 @@ class CertificateService
         // Define the file path
         $fileName = 'certificates/' . $participant->id . '-certificate.pdf';
 
-        $fontDirs = [storage_path('fonts/')];
-        $fontCache = storage_path('fonts/');
-
         $options = $pdf->getOptions();
-        $options->set('fontDir', $fontDirs);
-        $options->set('fontCache', $fontCache);
-        $options->set('defaultFont', 'DejaVu Sans'); // Set your default font
+        $options = [
+            'defaultFont' => 'DejaVu Sans',
+        ];        
         $pdf->setOptions($options);
 
         // Store the PDF in public disk
