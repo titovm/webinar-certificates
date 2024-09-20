@@ -58,31 +58,41 @@ class ViewCertificate extends Page implements HasTable
                     ->sortable()
                     ->searchable(),
 
-                BadgeColumn::make('certificate_url')
+                TextColumn::make('certificate_action')
                     ->label('Сертификат')
+                    ->badge()
                     ->colors([
-                        'success' => fn (Participant $record) => $record->certificate_url,  // Green for "Download"
-                        'primary' => fn (Participant $record) => !$record->certificate_url, // Red for "Generate"
+                        'success' => fn (Participant $record) => $record->certificate_url,
+                        'primary' => fn (Participant $record) => !$record->certificate_url,
                     ])
+                    ->icon(fn (Participant $record) => $record->certificate_url ? 'heroicon-s-document-arrow-down' : 'heroicon-s-document-plus')
+                    ->iconPosition('before') // Position the icon before the text
                     ->getStateUsing(function (Participant $record) {
                         return $record->certificate_url ? 'Загрузить' : 'Создать';
                     })
+                    ->url(fn (Participant $record) => $record->certificate_url ?: null)
+                    ->openUrlInNewTab()
                     ->action(function (Participant $record) {
-                        if ($record->certificate_url) {
-                            return redirect()->to($record->certificate_url);
-                        } else {
+                        if (!$record->certificate_url) {
+                            // Generate the certificate
                             $certificateService = new CertificateService();
                             $certificateUrl = $certificateService->generateAndStoreCertificate($record, $this->certificate);
-
+    
+                            // Update the participant's certificate_url
+                            $record->update(['certificate_url' => $certificateUrl]);
+    
+                            // Send the certificate via email
                             Mail::to($record->email)->send(new SendCertificateMail($record));
-
+    
                             Notification::make()
                                 ->title('Сертификат успешно создан и отправлен!')
                                 ->success()
                                 ->send();
+    
+                            // Refresh the table to show the updated certificate URL
+                            $this->emit('refreshTable');
                         }
-                    })
-                    ->icon(fn (Participant $record) => $record->certificate_url ? 'heroicon-s-document-arrow-down' : 'heroicon-s-document-plus'),
+                    }),
             ])
             ->actions([
                 DeleteAction::make()
