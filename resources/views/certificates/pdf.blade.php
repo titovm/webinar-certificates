@@ -16,7 +16,7 @@
             font-style: normal;
         }
         body {
-            font-family: 'Helvetica', sans-serif;
+            font-family: 'DejaVu Sans', sans-serif;
             text-align: center;
             margin: 0;
             padding: 0;
