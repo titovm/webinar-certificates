@@ -9,12 +9,12 @@
 <head>
     <meta charset="utf-8">
     <style>
-        @font-face {
+        /* @font-face {
             font-family: 'DejaVu Sans';
             src: url('{{ storage_path("fonts/DejaVuLGCSans.ttf") }}') format('truetype');
             font-weight: normal;
             font-style: normal;
-        }
+        } */
         body {
             font-family: 'DejaVu Sans', sans-serif;
             text-align: center;
@@ -26,7 +26,7 @@
             border-radius: 100px;
             padding: 50px;
             margin: 0px;
-            background: url('{{ public_path("storage/images/emdr_europe_bg.png") }}') center center no-repeat;
+            background: url('{{ asset("images/emdr_europe_bg.png") }}') center center no-repeat;
             position: relative;
             height: 580px;
         }
