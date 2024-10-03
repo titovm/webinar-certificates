@@ -26,6 +26,7 @@ use App\Filament\Resources\CertificateResource;
 use Filament\Pages\Actions\Action as PageAction;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Actions\Action as TableAction;
+use App\Models\Setting;
 
 class ViewCertificate extends Page implements HasTable
 {
@@ -82,12 +83,21 @@ class ViewCertificate extends Page implements HasTable
                             $record->update(['certificate_url' => $certificateUrl]);
     
                             // Send the certificate via email
-                            Mail::to($record->email)->send(new SendCertificateMail($record));
+                            if (Setting::getValue('email_sending_enabled', true)) {
+                                Mail::to($record->email)->send(new SendCertificateMail($record));
+
+                                Notification::make()
+                                    ->title('Сертификат успешно создан и отправлен!')
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Сертификат успешно создан!')
+                                    ->success()
+                                    ->send();
+                            }
     
-                            Notification::make()
-                                ->title('Сертификат успешно создан и отправлен!')
-                                ->success()
-                                ->send();
+                            
     
                             // Refresh the table to show the updated certificate URL
                             // $this->emit('refreshTable');
@@ -112,12 +122,20 @@ class ViewCertificate extends Page implements HasTable
                 TableAction::make('emailCertificate')
                     ->label('Отправить')
                     ->action(function (Participant $record) {
-                        Mail::to($record->email)->send(new SendCertificateMail($record));
-                        Notification::make()
-                            ->title('Сертификат отправлен')
-                            ->body('Сертификат отправлен по адресу ' . $record->email)
-                            ->success()
-                            ->send();
+                        if (Setting::getValue('email_sending_enabled', true)) {
+                            Mail::to($record->email)->send(new SendCertificateMail($record));
+                            Notification::make()
+                                ->title('Сертификат отправлен')
+                                ->body('Сертификат отправлен по адресу ' . $record->email)
+                                ->success()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Отправка почты отключена')
+                                ->body('Отправка почты отключена в настройках.')
+                                ->warning()
+                                ->send();
+                        }
                     }),
             ])
             ->bulkActions([
@@ -125,7 +143,9 @@ class ViewCertificate extends Page implements HasTable
                     ->label('Отправить сертификаты')
                     ->action(function (Collection $records) {  // Change to Collection
                         foreach ($records as $record) {
-                            Mail::to($record->email)->send(new SendCertificateMail($record));
+                            if (Setting::getValue('email_sending_enabled', true)) {
+                                Mail::to($record->email)->send(new SendCertificateMail($record));
+                            }
                         }
                         Notification::make()
                             ->title('Сертификаты отправлены')
@@ -197,13 +217,21 @@ class ViewCertificate extends Page implements HasTable
                     ]);
 
                     // Send the certificate email
-                    Mail::to($participant->email)->send(new SendCertificateMail($participant));
+                    if (Setting::getValue('email_sending_enabled', true)) {
+                        Mail::to($participant->email)->send(new SendCertificateMail($participant));
 
-                    // Trigger a success notification
-                    Notification::make()
-                        ->title('Участник добавлен, сертификат сгенерирован и отправлен по почте!')
-                        ->success()
-                        ->send();
+                        // Trigger a success notification
+                        Notification::make()
+                            ->title('Участник добавлен, сертификат сгенерирован и отправлен по почте!')
+                            ->success()
+                            ->send();
+                    } else {
+                        // Trigger a success notification
+                        Notification::make()
+                            ->title('Участник добавлен и сертификат сгенерирован!')
+                            ->success()
+                            ->send();
+                    }
                 }),
         ];
 

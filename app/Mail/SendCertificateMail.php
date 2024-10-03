@@ -11,6 +11,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Participant;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Setting;
 
 class SendCertificateMail extends Mailable
 {
@@ -24,6 +25,12 @@ class SendCertificateMail extends Mailable
     public function __construct(Participant $participant)
     {
         $this->participant = $participant;
+
+        // Set the "From" name and address
+        $fromName = Setting::getValue('email_from_name', config('mail.from.name'));
+        $fromAddress = Setting::getValue('email_from_address', config('mail.from.address'));
+
+        $this->from($fromAddress, $fromName);
     }
 
     /**
